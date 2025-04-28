@@ -76,11 +76,3 @@ serve -s build
 ```
 
 6. Access the app via the VM's IP address in your browser.
-
-## Screenshots
-
-- Courses list visible
-- Adding a new course
-- Editing a course
-- Deleting a course
-- Running on Debian VM
