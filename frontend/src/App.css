@@ -74,3 +74,14 @@ th, td {
   font-size: 1rem;
   cursor: pointer;
 }
+.delete-button {
+  background: none;
+  color: red;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.delete-button:hover {
+  color: darkred;
+}

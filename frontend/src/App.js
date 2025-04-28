@@ -42,6 +42,15 @@ function App() {
     }
   };
 
+  const deleteCourse = async (id) => {
+    if (window.confirm("Haluatko varmasti poistaa kurssin?")) {
+      await fetch(`http://localhost:3001/courses/${id}`, {
+        method: "DELETE",
+      });
+      fetchCourses();
+    }
+  };
+
   return (
     <div className="container">
       <div className="card">
@@ -55,6 +64,7 @@ function App() {
               <th>Kurssin nimi</th>
               <th>Arvosana</th>
               <th>Muokkaa</th>
+              <th>Poista</th>
             </tr>
           </thead>
           <tbody>
@@ -67,6 +77,11 @@ function App() {
                     Muokkaa
                   </button>
                 </td>
+                <td>
+                  <button className="delete-button" onClick={() => deleteCourse(course.id)}>
+                    Poista
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -74,7 +89,7 @@ function App() {
 
         <div className="form">
           <div>
-            <label>Kurssin nimi</label>
+            <label>Kurssin nimi:</label>
             <input
               type="text"
               value={newCourseName}
@@ -83,7 +98,7 @@ function App() {
             />
           </div>
           <div>
-            <label>Arvosana</label>
+            <label>Arvosana:</label>
             <input
               type="number"
               value={newCourseGrade}
