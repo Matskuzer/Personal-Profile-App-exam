@@ -1,0 +1,76 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 500px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+h3 {
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+th, td {
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  padding: 0.5rem;
+}
+
+.edit-button {
+  background: none;
+  color: blue;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.edit-button:hover {
+  color: darkblue;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.form button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}

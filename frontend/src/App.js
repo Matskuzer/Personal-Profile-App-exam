@@ -1,89 +1,99 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
   const [courses, setCourses] = useState([]);
-  const [courseName, setCourseName] = useState('');
-  const [grade, setGrade] = useState('');
-  const [editingCourse, setEditingCourse] = useState(null);
-
-  const API_URL = 'http://localhost:5000/courses';
+  const [newCourseName, setNewCourseName] = useState("");
+  const [newCourseGrade, setNewCourseGrade] = useState("");
 
   useEffect(() => {
     fetchCourses();
   }, []);
 
   const fetchCourses = async () => {
-    const res = await fetch(API_URL);
-    const data = await res.json();
+    const response = await fetch("http://localhost:3001/courses");
+    const data = await response.json();
     setCourses(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (editingCourse) {
-      await fetch(`${API_URL}/${editingCourse.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: courseName, grade }),
-      });
-      setEditingCourse(null);
-    } else {
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: courseName, grade }),
-      });
-    }
-    setCourseName('');
-    setGrade('');
-    fetchCourses();
-  };
+  const addCourse = async () => {
+    if (!newCourseName || !newCourseGrade) return;
 
-  const handleEdit = (course) => {
-    setCourseName(course.name);
-    setGrade(course.grade);
-    setEditingCourse(course);
-  };
-
-  const handleDelete = async (id) => {
-    await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE',
+    await fetch("http://localhost:3001/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newCourseName, grade: Number(newCourseGrade) }),
     });
+
+    setNewCourseName("");
+    setNewCourseGrade("");
     fetchCourses();
+  };
+
+  const editCourse = async (id) => {
+    const newGrade = prompt("Anna uusi arvosana:");
+    if (newGrade !== null) {
+      await fetch(`http://localhost:3001/courses/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grade: Number(newGrade) }),
+      });
+      fetchCourses();
+    }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Matias Nisula - NTIS22K</h1> {/* Vaihda tähän oma nimi ja ryhmä */}
-      <h2>Kurssit</h2>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.id}>
-            {course.name} - Arvosana: {course.grade}
-            <button onClick={() => handleEdit(course)}>Muokkaa</button>
-            <button onClick={() => handleDelete(course.id)}>Poista</button>
-          </li>
-        ))}
-      </ul>
+    <div className="container">
+      <div className="card">
+        <h1>Matias Nisula</h1>
+        <h2>NTIS22K</h2>
 
-      <h2>{editingCourse ? 'Muokkaa Kurssia' : 'Lisää Uusi Kurssi'}</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Kurssin nimi"
-          value={courseName}
-          onChange={(e) => setCourseName(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Arvosana"
-          value={grade}
-          onChange={(e) => setGrade(e.target.value)}
-          required
-        />
-        <button type="submit">{editingCourse ? 'Update' : 'Lisää'}</button>
-      </form>
+        <h3>Omat kurssit</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Kurssin nimi</th>
+              <th>Arvosana</th>
+              <th>Muokkaa</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses.map((course) => (
+              <tr key={course.id}>
+                <td>{course.name}</td>
+                <td>{course.grade}</td>
+                <td>
+                  <button className="edit-button" onClick={() => editCourse(course.id)}>
+                    Muokkaa
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="form">
+          <div>
+            <label>Kurssin nimi</label>
+            <input
+              type="text"
+              value={newCourseName}
+              onChange={(e) => setNewCourseName(e.target.value)}
+              placeholder="Kurssin nimi"
+            />
+          </div>
+          <div>
+            <label>Arvosana</label>
+            <input
+              type="number"
+              value={newCourseGrade}
+              onChange={(e) => setNewCourseGrade(e.target.value)}
+              placeholder="Arvosana"
+            />
+          </div>
+          <button onClick={addCourse}>Lisää kurssi</button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,50 +1,58 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+
 const app = express();
-const PORT = 5000;
+const PORT = 3001;
+const DATA_FILE = "courses.json";
 
 app.use(cors());
 app.use(express.json());
 
-let courses = [
-  { id: 1, name: 'Tietokannats', grade: '4' },
-  { id: 2, name: 'Ohjelmistotuotanto', grade: '5' }
-];
+const readData = () => {
+  if (!fs.existsSync(DATA_FILE)) return [];
+  const data = fs.readFileSync(DATA_FILE);
+  return JSON.parse(data);
+};
 
-app.get('/courses', (req, res) => {
-  res.json(courses);
+const writeData = (data) => {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+};
+
+app.get("/courses", (req, res) => {
+  res.json(readData());
 });
 
-app.post('/courses', (req, res) => {
-  const { name, grade } = req.body;
+app.post("/courses", (req, res) => {
+  const courses = readData();
   const newCourse = {
     id: Date.now(),
-    name,
-    grade
+    name: req.body.name,
+    grade: req.body.grade,
   };
   courses.push(newCourse);
+  writeData(courses);
   res.status(201).json(newCourse);
 });
 
-app.put('/courses/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, grade } = req.body;
-  const course = courses.find(c => c.id == id);
-  if (course) {
-    course.name = name;
-    course.grade = grade;
-    res.json(course);
-  } else {
-    res.status(404).json({ message: 'Kurssia ei löydy' });
-  }
+app.put("/courses/:id", (req, res) => {
+  const courses = readData();
+  const id = Number(req.params.id);
+  const updatedCourses = courses.map((course) =>
+    course.id === id ? { ...course, grade: req.body.grade } : course
+  );
+  writeData(updatedCourses);
+  res.json({ message: "Course updated" });
 });
 
-app.delete('/courses/:id', (req, res) => {
-  const { id } = req.params;
-  courses = courses.filter(c => c.id != id);
-  res.status(204).end();
+app.delete("/courses/:id", (req, res) => {
+  const courses = readData();
+  const id = Number(req.params.id);
+  const filteredCourses = courses.filter((course) => course.id !== id);
+  writeData(filteredCourses);
+  res.json({ message: "Course deleted" });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
